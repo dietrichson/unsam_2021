@@ -1,0 +1,89 @@
+---
+title: "Seminario Métodos Cuantitativos"
+author: "Aleksander Dietrichson, PhD"
+date: "13 de mayo 2021"
+output:
+  beamer_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Agenda
+
+
+- Requisitos
+- Funcionamiento y programa
+- Presentación de los participantes
+- Relevamiento de conocimientos previos
+- Bibliografía
+- Tecnologías a usar
+- Método cientifico
+- Tareas
+
+## Requisitos
+
+
+>El seminario de propone dotar a los doctorandos de las herramientas necesarias para poder desarrollar un trabajo científico con elementos cuantitativos con el fin de facilitar su trabajo de tesis y/u otros desarrollos científicos. Asimismo, se propone poner al alcance de los doctorandos los conocimentos necesarios para comprender y realizar una lectura crítica de trabajos de otro colegas investigadores.
+
+## Requisitos
+
+El seminario de evalúa como aprobado/desaprobado. Para aprobar el doctorando debe producir:
+
+- Un borrador del capítulo «metodología» de su tesis u otro trabajo científico que quiera desarrollar
+
+\center{O} 
+
+- Un análisis de datos empleando las técnicas que veremos en el seminario
+
+\center{O} 
+
+- Ambos
+
+## Funcionamiento y programa
+
+ - Reuniones los jueves y lunes
+ - Jueves: exposiciones teóricos prácticos por todos los participantes
+ - Lunes: Horario de consultas y tareas prácticas
+
+*El seminario se arma «a medida» según las necesidades de los doctorandos*
+
+## Presentación de los participantes
+
+Conozcamonos y contestemos las siguientes preguntas
+
+- ¿Sobre qué tema/area le gustaría trabajar?
+- ¿En qué fase está el trabajo?
+
+## Relevamiento de conocimientos previos
+
+
+
+## Bibliografía y materiales
+
+Habrá dos tipos de bibliografía:
+
+- Textos sobre metodología
+- Textos de ejemplo
+
+Otros materiales:
+
+serán disponibles en github.com
+
+
+## Tecnologías a usar
+
+R y Rstudio 
+
+- http://mirror.fcaglp.unlp.edu.ar/CRAN/
+- https://www.rstudio.com/products/rstudio/download/
+
+\center{O} 
+
+- Usarlo online en:
+  https://rstudio.cloud/
+
+## Método científico
+
+## Tareas
