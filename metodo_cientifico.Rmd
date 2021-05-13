@@ -1,0 +1,36 @@
+---
+title: "Método científico"
+author: "Aleksander Dietrichson, PhD"
+date: "13 de mayo 2021"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Karl Popper
+
+- Padre de la teoría cientifica moderna
+- Sostiene que la ciencia avanza proponiendo teorías e ideas que sean empíricamente refutable (falseables)
+- Las Teorías son refutadas *empiricamente*.
+- Promueve el principio de de falsabilidad (falsación o refutabilidad).
+
+Ref: https://bookdown.org/dietrichson/metodos-cuantitativos/diseno-de-proyectos-y-test-de-hipotesis.html
+
+## En investigaciones empiricas
+
+Problema: en vista de que «no podemos si also es cierto, solo si es falso», ¿qué hacemos?
+
+Aceptamos un riesgo de estar equivocados y lo calculamos matemáticamente (con estadísticas inferenciales)
+
+- La hipótesis nula y alternativa
+
+- Notación formal, ejemplo:
+
+$H_0$: No existe diferencia en el ingreso entre hombres y mujeres
+
+$H_1$: Los hombres ganan más
+
+$H_2$: Las mujeres ganan más
+
