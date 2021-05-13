@@ -89,8 +89,13 @@ R y Rstudio
 
 ## Método científico
 
+- Presentación
+
 ## Tareas
 
-- Determinar cuál/es es/son la/s hipótesis e hipótesis alternativas de su trabajo.
-- Formalizarlos
-- En caso de no existir hipótesis: justificarlo.
+1. Determinar cuál/es es/son la/s hipótesis e hipótesis alternativas de su trabajo.
+2. Formalizarlos
+3. En caso de no existir hipótesis: justificarlo.
+
+4. Crear un documento «Rmarkdown» en Rstudio para reportar los puntos anteriores.
+
