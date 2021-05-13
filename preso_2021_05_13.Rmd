@@ -58,7 +58,7 @@ Conozcamonos y contestemos las siguientes preguntas
 
 ## Relevamiento de conocimientos previos
 
-
+- Encuesta en vivo
 
 ## Bibliografía y materiales
 
@@ -69,8 +69,11 @@ Habrá dos tipos de bibliografía:
 
 Otros materiales:
 
-serán disponibles en github.com
+- En Moodle
 
+ Y también: 
+ 
+- https://github.com/dietrichson/unsam_2021
 
 ## Tecnologías a usar
 
@@ -87,3 +90,7 @@ R y Rstudio
 ## Método científico
 
 ## Tareas
+
+- Determinar cuál/es es/son la/s hipótesis e hipótesis alternativas de su trabajo.
+- Formalizarlos
+- En caso de no existir hipótesis: justificarlo.
