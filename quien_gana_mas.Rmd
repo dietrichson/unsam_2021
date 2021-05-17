@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 INDEC: 
 
-https://www.indec.gob.ar/indec/web/Institucional-Indec-BasesDeDatos)
+https://www.indec.gob.ar/indec/web/Institucional-Indec-BasesDeDatos
 
 Manual:
 https://www.indec.gob.ar/ftp/cuadros/menusuperior/eph/EPH_registro_4T2020.pdf
@@ -24,20 +24,71 @@ https://www.indec.gob.ar/ftp/cuadros/menusuperior/eph/EPH_registro_4T2020.pdf
 ## Leer los datos
 
 ```{r}
-my_data <- read.csv("./data/usu_individual_T420.txt",sep = ";")
+my_data <- read.csv("./data/usu_individual_T420.txt", sep = ";" )
 ```
 
 
 ```{r}
-library(dplyr)
-my_data <- my_data %>% 
-  select(PP08D1,CH04 ) %>% 
-  rename("ingreso" = PP08D1) %>% 
-  rename("sexo" = CH04)
+nrow(my_data)
+```
 
+```{r}
+ncol(my_data)
+```
+
+
+
+```{r}
+library(dplyr)
+my_data <- my_data %>%
+  select(PP08D1,CH04 ) %>%
+  rename("ingreso" = PP08D1) %>%
+  rename("sexo" = CH04)
+# "1" == "uno"
 my_data$sexo <- factor(my_data$sexo, labels = c("1"="varón", "2"="mujer"))
-my_data
-my_data <- my_data %>% filter(!is.na(ingreso))
-my_data
+# my_data
+my_data <- my_data %>% 
+  filter(!is.na(ingreso))
+# my_data
+```
+
+```{r}
+my_data %>% 
+  group_by(sexo) %>% 
+  summarize(
+    Promedio = mean(ingreso),
+    Mediano = median(ingreso)
+  )
+```
+
+
+
+```{r}
+
+datos_mujer <- my_data %>% 
+  filter(sexo == "mujer")
+datos_hombre <- my_data %>% 
+  filter(sexo == "varón")
+
+```
+
+
+$\alpha$ = .05
+
+```{r}
+t.test(datos_mujer$ingreso, datos_hombre$ingreso)
+```
+
+
+```{r}
+x = 1 #asignacion
+x <- 1 #lo mismo
+x == 2 #comparacion
+x == 1 #comparacion
+```
+
+```{r}
+options(scipen = 999)
+t.test(datos_hombre$ingreso, datos_mujer$ingreso)
 ```
 

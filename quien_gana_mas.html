@@ -173,7 +173,27 @@ pre code {
 
 <div id="fuente-de-los-datos" class="section level2">
 <h2>Fuente de los datos</h2>
-<p>&lt;(<a href="https://www.indec.gob.ar/indec/web/Institucional-Indec-BasesDeDatos" class="uri">https://www.indec.gob.ar/indec/web/Institucional-Indec-BasesDeDatos</a>)&gt;</p>
+<p>INDEC:</p>
+<p><a href="https://www.indec.gob.ar/indec/web/Institucional-Indec-BasesDeDatos" class="uri">https://www.indec.gob.ar/indec/web/Institucional-Indec-BasesDeDatos</a></p>
+<p>Manual: <a href="https://www.indec.gob.ar/ftp/cuadros/menusuperior/eph/EPH_registro_4T2020.pdf" class="uri">https://www.indec.gob.ar/ftp/cuadros/menusuperior/eph/EPH_registro_4T2020.pdf</a></p>
+<ul>
+<li>PP08D1 = Sueldo</li>
+<li>CH04 N = Sexo <strong>codigos</strong>:1 = varón, 2 = mujer</li>
+</ul>
+</div>
+<div id="leer-los-datos" class="section level2">
+<h2>Leer los datos</h2>
+<pre class="r"><code>my_data &lt;- read.csv(&quot;./data/usu_individual_T420.txt&quot;,sep = &quot;;&quot;)</code></pre>
+<pre class="r"><code># library(dplyr)
+# my_data &lt;- my_data %&gt;% 
+#   select(PP08D1,CH04 ) %&gt;% 
+#   rename(&quot;ingreso&quot; = PP08D1) %&gt;% 
+#   rename(&quot;sexo&quot; = CH04)
+# 
+# my_data$sexo &lt;- factor(my_data$sexo, labels = c(&quot;1&quot;=&quot;varón&quot;, &quot;2&quot;=&quot;mujer&quot;))
+# my_data
+# my_data &lt;- my_data %&gt;% filter(!is.na(ingreso))
+# my_data</code></pre>
 </div>
 
 
