@@ -1,0 +1,43 @@
+---
+title: "¿Quién gana más?"
+author: "Aleksander Dietrichson, PhD"
+date: "5/14/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Fuente de los datos
+
+INDEC: 
+
+https://www.indec.gob.ar/indec/web/Institucional-Indec-BasesDeDatos)
+
+Manual:
+https://www.indec.gob.ar/ftp/cuadros/menusuperior/eph/EPH_registro_4T2020.pdf
+
+* PP08D1 = Sueldo
+* CH04 N = Sexo **codigos**:1 = varón, 2 = mujer
+
+## Leer los datos
+
+```{r}
+my_data <- read.csv("./data/usu_individual_T420.txt",sep = ";")
+```
+
+
+```{r}
+library(dplyr)
+my_data <- my_data %>% 
+  select(PP08D1,CH04 ) %>% 
+  rename("ingreso" = PP08D1) %>% 
+  rename("sexo" = CH04)
+
+my_data$sexo <- factor(my_data$sexo, labels = c("1"="varón", "2"="mujer"))
+my_data
+my_data <- my_data %>% filter(!is.na(ingreso))
+my_data
+```
+

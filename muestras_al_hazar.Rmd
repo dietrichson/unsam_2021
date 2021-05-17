@@ -1,0 +1,30 @@
+---
+title: "Aleatorio"
+author: "Aleksander Dietrichson, PhD"
+date: "5/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Generar muestras al hazar
+
+```{r}
+my_data <-
+  data.frame(
+    nombre = c(
+      "MARIA FERNANDA BRATTI",
+      "Vanina Celada",
+      "Julio Osvaldo Chavez",
+      "Blanca Nahayeli Gómez Aguilera",
+      "MATIAS RIZZUTO",
+      "Emiliano Facundo Ross",
+      "Camila Stecher",
+      "MALENA VELARDE",
+      "Rodolfo Maximiliano Cacace Bach"
+      )
+  )
+```
+
