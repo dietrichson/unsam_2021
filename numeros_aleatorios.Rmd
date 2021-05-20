@@ -1,0 +1,40 @@
+---
+title: "Numeros Aleatorios"
+author: "Aleksander Dietrichson, PhD"
+date: "5/20/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Generar Numeros Aleatorios (Random, randómicos)
+
+
+```{r}
+set.seed(1621548748)
+
+my_vec <- sample.int(n=10, size = 5)
+
+my_vec
+```
+
+Como vimos el 1 sale favorecido....
+
+
+```{r}
+my_vec <- rnorm(n = 10, mean = 100, sd = 15)
+my_vec
+```
+
+```{r}
+#Esto debe tirar error:
+
+my_vec <- sample.int(n=10, size = 20)
+```
+
+```{r}
+my_vec <- sample.int(n=10, size = 20, replace=TRUE)
+my_vec
+```

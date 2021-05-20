@@ -1,0 +1,139 @@
+---
+title: "Mas variables del INDEC"
+author: "Aleksander Dietrichson, PhD"
+date: "5/20/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Fuente de los datos
+
+INDEC: 
+
+https://www.indec.gob.ar/indec/web/Institucional-Indec-BasesDeDatos
+
+Manual:
+https://www.indec.gob.ar/ftp/cuadros/menusuperior/eph/EPH_registro_4T2020.pdf
+
+* PP08D1 = Sueldo
+* CH04 = Sexo **codigos**: 1 = varón, 2 = mujer
+* CH12 = Nivel Educativo
+  1 = Jardín/preescolar
+  2 = Primario
+  3 = EGB
+  4 = Secundario
+  5 = Polimodal
+  6 = Terciario
+  7 = Universitario
+  8 = Posgrado universitario
+  9 = Educación especial (discapacitado)
+  
+* REGION
+  01 = Gran Buenos Aires
+  40 = NOA
+  41 = NEA
+  42 = Cuyo
+  43 = Pampeana
+  44 = Patagonia
+* AGLOMERADO
+
+## Leer los datos
+
+```{r}
+my_data <- read.csv("./data/usu_individual_T420.txt", sep = ";" )
+```
+
+
+
+```{r}
+library(dplyr)
+my_data <- my_data %>%
+  select(PP08D1,CH04,CH12,REGION ) %>%
+  rename("ingreso" = PP08D1) %>%
+  rename("sexo" = CH04)
+# "1" == "uno"
+my_data$sexo <- factor(my_data$sexo, labels = c("1"="varón", "2"="mujer"))
+
+my_data$region <- 
+  factor(as.character(my_data$REGION), 
+         labels = c("1" = "Gran Buenos Aires",
+                    "40" = "NOA",
+                    "41" = "NEA",
+                    "42" = "Cuyo",
+                    "43" = "Pampeana",
+                    "44" = "Patagonia")
+  )
+
+my_data <- my_data %>% 
+  filter(!is.na(ingreso))
+
+```
+
+
+```{r}
+sum(my_data$ingreso<0)
+```
+
+```{r}
+my_data <- my_data %>% 
+  filter(ingreso >=0)
+```
+
+
+```{r}
+my_data %>% 
+  group_by(sexo) %>% 
+  summarize(
+    Promedio = mean(ingreso),
+    Mediano = median(ingreso)
+  )
+```
+
+```{r}
+my_data %>% 
+  group_by(region) %>% 
+    summarize(
+    Promedio = mean(ingreso),
+    Mediano = median(ingreso)
+  )
+```
+
+```{r}
+my_data %>% 
+  group_by(region, sexo) %>% 
+    summarize(
+    Promedio = mean(ingreso),
+    Mediano = median(ingreso)
+  )
+```
+
+
+```{r}
+library(ggplot2)
+options(scipen=100)
+my_data %>% 
+  ggplot(aes(x=ingreso))+
+  geom_histogram(binwidth = 10000)
+```
+
+```{r}
+my_data %>% 
+  ggplot(aes(x=ingreso, fill=sexo))+
+  geom_histogram(binwidth = 10000)
+```
+
+```{r}
+my_data %>% 
+  ggplot(aes(x=ingreso, fill=sexo))+
+  geom_histogram(binwidth = 10000, position = "dodge")
+```
+
+```{r}
+my_data %>% 
+  ggplot(aes(x=ingreso, fill=sexo))+
+  geom_density(alpha=.4)
+```
+

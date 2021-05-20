@@ -1,0 +1,131 @@
+---
+title: "Población, muestra, variables y distribuciones"
+author: "Aleksander Dietrichson, PhD"
+date: "20 de mayo 2021"
+output: beamer_presentation
+
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+update_geom_defaults("bar", list(fill="red",color="red",alpha=.5))
+update_geom_defaults("density", list(fill="red",color="red", alpha=.5))
+theme_set(theme_tufte())
+```
+
+## Agenda
+
+1. Población y muestras
+2. Variables
+3. Distribuciones
+4. Tipos de estadísticas
+5. Tareas
+6. Ejemplos
+
+
+## Población y muestra
+
+* Definición de población
+* La muestra
+* Ejemplo: encuesta del INDEC
+* Generalizabilidad
+
+## Población y muestra
+
+### Notación
+
+* *parámetros* de la población 
+  * Se suele usar letras griegas
+  * Media: $\mu$
+  * Desviación estándar: $\sigma^2$
+  * Correlación: $\rho$
+  
+* *estimaciones* basadas en la muestra 
+  * Se suele usar letras latinas
+  * Media: $\bar{x}$
+  * Mediana: $\widetilde{x}$
+  * Desviación estándar: $s^2$
+  * Correlación: r
+
+* A veces también se usa «capucha» para significar una variable que se ajusta/estima:
+  * $\widehat{Y} \sim \alpha+ x\beta+\epsilon$
+
+## Variables
+
+Nivel de medición:
+
+* Nominal
+  - Sexo
+  - Etnicidad
+  - País de nacimeinto
+* Ordinal
+  - Gustos y preferencias (carne/pollo, Messi/Ronaldo/Suarez, Piazzolla/Gardel)
+  - Ranking (Messi/Ronaldo/Suarez)
+* Intervalo
+  - Temperatura
+* Ratio
+  - Ingreso
+  - Tiempo
+  - Peso
+
+## Variables
+
+Nivel de precisión:
+
+* Discreta
+  - Número de hijos
+* Continua
+  - Edad
+
+## Variables
+
+Relación con otras variables:
+
+* Independiente (Predictores/experimentales)
+* Dependiente ( a veces: *criterio*)
+
+## Distribuciones de frecuencias
+
+* Nos indica *la estructura* de los datos
+* Pueden tener *sesgos* o *asimetrías*
+
+---
+
+```{r, echo=FALSE}
+set.seed(1621532261)
+x <- rnorm(10000,mean = 100,sd = 15)
+data.frame(x=x) %>% 
+  ggplot(aes(x))->p
+p+geom_histogram(color = "red", binwidth =7.5)
+```
+
+---
+```{r}
+p+
+  geom_density()
+```
+
+## Tipos de estadísticas
+
+* Descriptivas
+* Inferenciales
+* Predictivas
+
+## Tareas
+
+Contestar/reflexionar sobre las siguientes preguntas:
+
+* ¿Mi estudio/investigación es inferencial o descriptivo? ¿otro (justificar)?
+* ¿Cuáles son mis variables?
+* ¿Cuáles son sus niveles de medición?
+* ¿Su nivel de precisión?
+* ¿cuáles son dependientes e independientes?
+
+## Ejemplos
+
+Seguimos con la encuesta del INDEC
+
