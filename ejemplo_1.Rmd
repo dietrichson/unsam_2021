@@ -1,0 +1,67 @@
+---
+# title: "Ejemplos de Código"
+# date: "24 de mayo 2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Sección I
+
+```{r}
+source("./ejemplo_1.R")
+print(z)
+```
+
+```{r}
+x <- 1:10
+y <- 11:20
+my_data <- data.frame(x,y)
+print(y)
+print(my_data)
+```
+
+```{r}
+x <- 1:10
+y <- 11:20
+my_data <- data.frame(x,y)
+print(y)
+```
+
+## Sección II
+
+```{r}
+# Esto no funciona
+# variable_nueva
+```
+
+
+```{r}
+print(my_data)
+```
+
+
+
+
+```{r}
+my_data2 <- data.frame(equis = x, ygriega=y)
+```
+
+```{r}
+my_data3 <- data.frame(nombre = c("Sasha", "Cecilia"), apellido = c("Dietrichson","Magadan") )
+```
+
+
+```{r}
+my_data2$equis
+my_data2$ygriega
+```
+
+```{r}
+variable_nueva <- 0
+```
+
