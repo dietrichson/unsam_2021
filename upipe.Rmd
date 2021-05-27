@@ -1,0 +1,35 @@
+---
+title: "upipe"
+author: "Aleksander Dietrichson, PhD"
+date: "27 de mayo 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+if(!require(udpipe)) install.packages("udpipe")
+# otro paquete : tidytext
+# udpipe_download_model("spanish") # toma un par de minutos
+
+```
+
+## Cagar el modelo
+
+```{r}
+my_model <- udpipe_load_model("./spanish-gsd-ud-2.4-190531.udpipe")
+```
+
+
+## Cargar datos
+
+```{r}
+articulo_la_nacion <- readLines("./data/articulo.txt")
+```
+
+## Analisis
+```{r}
+x <- udpipe_annotate(my_model, x = articulo_la_nacion)
+x <- as.data.frame(x)
+```
+
+

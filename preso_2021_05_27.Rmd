@@ -1,0 +1,177 @@
+---
+title: "Población, muestra, variables y distribuciones"
+author: "Aleksander Dietrichson, PhD"
+date: "27 de mayo 2021"
+output: beamer_presentation
+
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+library(bayestestR)
+update_geom_defaults("bar", list(fill="red",color="red",alpha=.5))
+update_geom_defaults("density", list(fill="red",color="red", alpha=.5))
+theme_set(theme_tufte())
+```
+
+## Agenda
+
+1. Tendencia Central y dispersión
+2. Distribución normal
+3. Regla empírica
+4. Tareas
+5. Ejemplos
+
+
+## Tendencia central
+
+
+* Media
+* Mediano
+* Moda
+
+```{r, eval = FALSE, echo=TRUE}
+
+mean(x)
+
+median(x)
+
+```
+  
+  * No hay una función para determinar *la moda*. Es a ojo!
+  * Puede haber más de una
+  
+## Tendencia central - La moda
+
+```{r}
+x <- distribution_uniform(30,0,10,random = TRUE)
+x <- c(x,rep(5,10))
+x <- round(x)
+x %>% 
+  data.frame() %>% 
+  ggplot(aes(x))+
+  geom_bar()
+
+```
+
+## Tendencia central - La moda
+
+```{r}
+
+x <- c(x,rep(2,10))
+
+x %>% 
+  data.frame() %>% 
+  ggplot(aes(x))+
+  geom_bar()
+
+```
+
+  
+## Dispersión
+
+* Desviación estándard (Standard Deviation)
+* Desviación mediana absoluta (Median Absolure Deviation)
+* Rango
+* Rango intercuartíl
+
+## Dispersión
+
+```{r, eval=TRUE, echo = TRUE}
+x <- c(8, 7, 4, 5, 5, 0, 5, 6, 1, 7, 
+       4, 2, 1, 5, 4, 3, 7, 9, 7, 2, 
+       1, 7, 0, 10, 4, 1, 8, 7, 6, 2, 5, 
+       5, 5, 5, 5, 5, 5, 5, 5, 5, 2, 2, 
+       2, 2, 2, 2, 2, 2, 2, 2)
+```
+
+```{r,eval=TRUE, echo = TRUE}
+mean(x)
+median(x)
+```
+  
+## Dispersión  
+  
+```{r,eval=TRUE, echo = TRUE}
+range(x)
+IQR(x)
+sd(x)
+mad(x)
+
+```
+
+## Summary
+
+
+```{r}
+summary(x)
+```
+
+
+## Distribución normal
+
+
+```{r}
+estatura <- distribution_normal(n = 100, mean = 161.01, sd = 6.99) %>% 
+  density() %>%  # Compute density function
+  as.data.frame()
+estatura %>% 
+  ggplot(aes(x=x, y=y)) +
+  geom_line()+
+  theme_minimal() +
+   labs(caption="Fuente: Ministerio de Salud",y=NULL,x="Estatura") -> plot_estatura
+plot_estatura
+```
+
+## Regla empírica
+
+
+```{r}
+x <- distribution_normal(n = 100, mean = 0, sd = 1)
+x %>% 
+  density() %>%  # Compute density function
+  as.data.frame() ->tmp
+myCuts <- sd(x)*seq(-3,3,1)
+names(myCuts) <- seq(-3,3,1)
+
+tmp %>% 
+  ggplot(aes(x=x, y=y)) +
+  geom_line()+
+  geom_area(position = "identity", data=tmp %>%  filter(between(x,myCuts[3],myCuts[5])),fill='darkred')+
+  geom_area(position = "identity", 
+            data = tmp %>%  
+              filter(between(x,myCuts[2],myCuts[3])),
+            fill='red')+
+  geom_area(position = "identity", data = tmp %>% filter(between(x,myCuts[5],myCuts[6])), fill='red')+
+  geom_area(position = "identity", data = tmp %>% filter(x<myCuts[2]), fill='pink')+
+  geom_area(position = "identity", data = tmp %>% filter(x>myCuts[6]), fill='pink')+
+  geom_area(position = "identity", data = tmp %>% filter(x>myCuts[7]), fill='gray')+
+  geom_area(position = "identity", data = tmp %>% filter(x<myCuts[1]), fill='gray')+
+  ## Add vertical line for mean
+  annotate("segment",x=0,xend=0,y=0,yend=max(tmp$y), color='white')+
+  annotate("text",x=c(myCuts[3],myCuts[4]),y=c(.2,.2),label="34,1%",hjust=-.4, color="white", cex=5)+
+  annotate("text",x=c(myCuts[2],myCuts[5]),y=c(.09,.09),label="13,6%",hjust=c(-.4,-.2), color="white", cex=5)+
+  annotate("text",x=c(myCuts[1],myCuts[6]),y=c(.1,.1),label="2,1%",hjust=c(-.4,-.5), cex=5)+
+  annotate("text",x=c(min(x),max(x)),y=c(.07,.07),label="0,1%",hjust=c(2,-1.5), cex=5)+
+  theme_minimal()+
+  annotate("segment",x=sd(x)*-2.5,xend=sd(x)*-2.5,y=0.03,yend=.09)+
+  annotate("segment",x=sd(x)*2.5,xend=sd(x)*2.5,y=0.03,yend=.09)+
+  annotate("segment",x=sd(x)*-2.5,xend=sd(x)*-2.5,y=0.03,yend=.09)+
+  annotate("segment",x=sd(x)*-3.3,xend=sd(x)* -3.3,y=0,yend=.06)+
+  annotate("segment",x=sd(x)* 3.3,xend=sd(x)*  3.3,y=0,yend=.06)+
+  scale_x_continuous(breaks=myCuts,labels=paste0(names(myCuts)))+
+  xlab("Desviación Estándard")
+```
+
+
+## Tareas
+
+1. ¿cómo medir la tendencia central de sus datos?
+2. ¿y la dispersión?
+3. Justificar las respuestas
+
+## Ejemplos

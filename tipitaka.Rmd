@@ -1,0 +1,48 @@
+---
+title: "Extraer datos de tititaka"
+author: "Aleksander Dietrichson, PhD"
+date: "27 de mayo 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Fuente de datos
+https://tipitaka.org/romn/
+
+### Url especifica
+
+https://tipitaka.org/romn/cscd/vin01m.mul0.xml
+
+```{r}
+library(httr)
+library(rvest)
+resp <- GET("https://tipitaka.org/romn/cscd/vin01m.mul0.xml", content_type_xml())
+
+```
+
+
+```{r}
+content(resp)
+```
+```{r}
+my_data <- read.csv("./data/tipitaka.csv", stringsAsFactors = FALSE)
+library(tidytext)
+names(my_data) <- c("text")
+my_data %>% 
+  unnest_tokens(word,text) -> tempDF
+
+```
+
+
+
+```{r}
+tempDF %>% 
+  filter(word == "pana") %>% 
+  nrow()
+```
+
