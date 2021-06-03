@@ -1,0 +1,213 @@
+---
+title: "Notas de la clase 3 de junio"
+author: "Sasha"
+date: "6/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+```
+
+## Carga de datos con read.cvs
+
+```{r}
+my_data <- read.csv("./data/usu_individual_T420.txt", sep = ";")
+```
+
+
+```{r}
+# my_data_2 <- read_delim("data/usu_individual_T420.csv", 
+# +     ";", escape_double = FALSE, trim_ws = TRUE)
+```
+
+```{r}
+library(dplyr)
+my_data <- my_data %>%
+  select(PP08D1,CH04,CH12,REGION ) %>%
+  rename("ingreso" = PP08D1) %>%
+  rename("sexo" = CH04)
+# "1" == "uno"
+my_data$sexo <- factor(my_data$sexo, labels = c("1"="varón", "2"="mujer"))
+
+my_data$region <- 
+  factor(as.character(my_data$REGION), 
+         labels = c("1" = "Gran Buenos Aires",
+                    "40" = "NOA",
+                    "41" = "NEA",
+                    "42" = "Cuyo",
+                    "43" = "Pampeana",
+                    "44" = "Patagonia")
+  )
+
+my_data <- my_data %>% 
+  filter(!is.na(ingreso))
+```
+
+
+```{r}
+my_data <- my_data %>% 
+  filter(ingreso>=0)
+
+```
+
+
+```{r}
+nrow(my_data)
+```
+
+```{r}
+mean(my_data$ingreso) -> promedio_poblacion
+promedio_poblacion
+```
+
+```{r}
+set.seed(1622757020)
+```
+
+```{r}
+muestra_1 <- my_data %>% 
+  sample_n(30)
+```
+
+```{r}
+mean(muestra_1$ingreso)
+muestra_1$ingreso %>% 
+  mean()
+```
+
+```{r}
+sd(my_data$ingreso)
+sd(muestra_1$ingreso)
+```
+
+```{r}
+library(ggplot2)
+muestra_1 %>% 
+  ggplot(aes(ingreso))+
+  geom_density()
+```
+
+```{r}
+library(ggplot2)
+muestra_1 %>% 
+  ggplot(aes(ingreso))+
+  geom_density()+
+  scale_x_log10()
+```
+
+```{r}
+options(scipen=100)
+my_data %>% 
+   ggplot(aes(ingreso))+
+  geom_density()+
+  scale_x_log10()
+```
+
+```{r}
+range(my_data$ingreso)
+range(muestra_1$ingreso)
+```
+
+```{r}
+promedios_muestrales <- c()
+
+for(i in 1:1000){
+  muestra_tmp <- my_data %>% 
+    sample_n(30)
+  promedios_muestrales <- c(promedios_muestrales,mean(muestra_tmp$ingreso))
+}
+
+```
+
+
+```{r}
+head(promedios_muestrales)
+promedio_poblacion
+```
+
+```{r}
+deltas <- promedios_muestrales - promedio_poblacion
+head(deltas)
+```
+
+```{r}
+data.frame(delta = deltas) %>% 
+  ggplot(aes(delta))+
+  geom_histogram()
+```
+
+```{r}
+shapiro.test(deltas)
+```
+
+```{r}
+m <- mean(muestra_1$ingreso)
+s <- sd(muestra_1$ingreso)
+s
+se <- s/sqrt(nrow(muestra_1))
+se
+```
+
+```{r}
+m
+```
+
+```{r}
+m
+m+1.96*se
+m-1.96*se
+```
+
+```{r}
+m+1*se
+m-1*se
+```
+
+```{r}
+muestra_2 <- my_data %>% 
+  sample_n(300)
+```
+
+```{r}
+m <- mean(muestra_2$ingreso)
+s <- sd(muestra_2$ingreso)
+s
+se <- s/sqrt(nrow(muestra_2))
+se
+
+m
+m+1.96*se
+m-1.96*se
+```
+
+```{r}
+
+ingreso_mujeres <- my_data %>% 
+  filter(sexo == "mujer") %>% 
+  pull(ingreso)
+ingreso_hombres <- my_data %>% 
+  filter(sexo == "varón") %>% 
+  pull(ingreso)
+```
+
+```{r}
+t.test(ingreso_hombres, ingreso_mujeres)
+```
+
+# Modelo de regresion
+
+```{r}
+my_model <- lm(ingreso ~ sexo, data=my_data )
+my_model
+```
+
+```{r}
+summary(my_model)
+```
+
+```{r}
+t.test(ingreso_hombres, ingreso_mujeres, var.equal = TRUE)
+```
+

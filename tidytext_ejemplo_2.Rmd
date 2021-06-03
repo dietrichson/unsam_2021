@@ -1,0 +1,114 @@
+---
+title: "tidytext 2"
+author: "Aleksander Dietrichson, PhD"
+date: "5/31/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidytext)
+library(tidyverse)
+```
+
+## Tidytext
+
+```{r}
+texto <- readLines("./data/articulo.txt")
+texto
+```
+
+
+```{r}
+my_data <- data.frame(text = texto, stringsAsFactors = FALSE)
+```
+
+```{r}
+my_data2 <- my_data %>% 
+  unnest_tokens(word,text)
+```
+
+
+## Cuán largo es el artículo
+
+```{r}
+nrow(my_data2)
+```
+
+```{r}
+my_data2 %>% 
+  group_by(word) %>% 
+  count(sort=TRUE)
+```
+
+## Como identificar clases de palabras
+
+Paquete
+
+```{r}
+library(udpipe)
+udpipe_download_model()
+```
+
+```{r}
+hunspell::hunspell_analyze(my_data2$word,dict = "es_AR")
+```
+
+
+```{r}
+my_function <- function(){
+  lapply(
+    my_data$text,function(paragraph){
+      list(
+        apellido = stringr::str_count(paragraph,"Fernández"),
+        nombre_de_pila = stringr::str_count(paragraph,"Alberto")
+      )
+      
+    }
+    
+  )
+}
+my_function()
+```
+```{r}
+
+system.time(
+  my_function()
+)
+```
+
+
+```{r}
+func2 <- function(){ purrr::map_dfr(.x = my_data$text,~{
+  
+  data.frame(apellido =stringr::str_count(.x,"Fernández"),
+             nombre_de_pila = stringr::str_count(.x,"Alberto")
+  )
+  
+}
+
+)
+}
+
+  
+```
+
+```{r}
+system.time(func2())
+```
+
+```{r}
+purrr::map2_dfr(.x = my_data$text,.y = 1:40,~{
+  
+  data.frame(parrafo = .y,
+             apellido =stringr::str_count(.x,"Fernández"),
+             nombre_de_pila = stringr::str_count(.x,"Alberto")
+  )
+  
+}
+
+)
+```
+
+
+

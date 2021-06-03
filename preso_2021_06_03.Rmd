@@ -1,0 +1,82 @@
+---
+title: "Estimación de parámetros y pruebas paramétricas"
+author: "Aleksander Dietrichson, PhD"
+date: "3 de junio 2021"
+output: beamer_presentation
+
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+library(bayestestR)
+update_geom_defaults("bar", list(fill="red",color="red",alpha=.5))
+update_geom_defaults("density", list(fill="red",color="red", alpha=.5))
+theme_set(theme_tufte())
+```
+
+## Agenda
+
+1. Estimación de parámetros
+2. Error estándard
+3. Test de T
+5. Ejemplos
+4. Tareas
+
+
+## Estimación de tendencia central
+
+
+```{r, eval = FALSE, echo=TRUE}
+
+mean(x)
+
+median(x)
+
+```
+  
+El promedio es el promedio *real* de la muestra. La pregunta que frecuentemente nos hacemos es si ese promedio es válido para el resto de la *población*.
+
+
+## Distribución muestras
+
+* Tiende a ser más "angosta" que la de la población.
+* Ya que es más probable que aleatoriamente saquemos uno de los valores más frecuentes de ella.
+ 
+## Error estándard 
+
+$$
+s\over{\sqrt{N}}
+$$
+ 
+* Si la muestra es aleatoria, cualquier error/differencia entre el promedio de la muestra y el promedio de la población tiende a tener una distribución normal.
+* Nos podemos valer de este hecho, y la *regla empírica* para calcular un rando de confianza.
+
+## Test de T
+
+* Dos variantes: 
+  * cuando hay dos observaciones por cada sujeto "de lo mismo"
+    * Antes y después
+    * De noche y de día
+  * Cuando hay dos poblaciones independientes (presuntamente)
+    * Ingreso de hombres y mujeres
+    * Con o sin vacuna
+
+## Test de Z
+
+* Se puede usar como test de independencia (en el caso de muestras independientes) si hay muchos datos.
+* Con frecuencia de remplaza por un test de T aún en estos casos. (Pierde un poco de poder).
+
+## Ejemplos
+
+
+## Tareas
+
+* ¿Su estudio está basado en muestras?
+* ¿Son aleatorias u obedecen a otro criterio de selección?
+* ¿Van a realizarse tests estadísticos?
+  * ¿Son paramétricos o no paramétricos?
+  
