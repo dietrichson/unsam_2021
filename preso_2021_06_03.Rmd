@@ -52,8 +52,8 @@ $$
 s\over{\sqrt{N}}
 $$
  
-* Si la muestra es aleatoria, cualquier error/differencia entre el promedio de la muestra y el promedio de la población tiende a tener una distribución normal.
-* Nos podemos valer de este hecho, y la *regla empírica* para calcular un rando de confianza.
+* Si la muestra es aleatoria, cualquier error/differencia entre el promedio de la muestra y el promedio de la población (con distribución normal) tiende una distribución normal.
+* Nos podemos valer de este hecho, y la *regla empírica* para calcular un rango de confianza.
 
 ## Test de T
 

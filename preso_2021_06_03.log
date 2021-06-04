@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2019/dev/Debian) (preloaded format=pdflatex 2019.7.18)  3 JUN 2021 16:41
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2019/dev/Debian) (preloaded format=pdflatex 2019.7.18)  4 JUN 2021 09:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1162,11 +1162,11 @@ Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 270.
 Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 270.
  ) 
 Here is how much of TeX's memory you used:
- 23497 strings out of 492615
- 421286 string characters out of 6131390
+ 23495 strings out of 492615
+ 421264 string characters out of 6131390
  508911 words of memory out of 5000000
  26860 multiletter control sequences out of 15000+600000
- 78859 words of font info for 89 fonts, out of 8000000 for 9000
+ 78758 words of font info for 88 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  56i,11n,55p,804b,558s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dv
@@ -1176,7 +1176,7 @@ c/lm/lmss9.pfb></usr/share/texmf/fonts/type1/public/lm/lmsso10.pfb></usr/share/
 texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/
 lmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/m
 sam10.pfb>
-Output written on preso_2021_06_03.pdf (9 pages, 118099 bytes).
+Output written on preso_2021_06_03.pdf (9 pages, 118082 bytes).
 PDF statistics:
  108 PDF objects out of 1000 (max. 8388607)
  83 compressed objects within 1 object stream
