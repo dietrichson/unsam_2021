@@ -113,7 +113,7 @@ range(muestra_1$ingreso)
 ```{r}
 promedios_muestrales <- c()
 
-for(i in 1:1000){
+for(i in 1:5000){
   muestra_tmp <- my_data %>% 
     sample_n(30)
   promedios_muestrales <- c(promedios_muestrales,mean(muestra_tmp$ingreso))
@@ -136,10 +136,6 @@ head(deltas)
 data.frame(delta = deltas) %>% 
   ggplot(aes(delta))+
   geom_histogram()
-```
-
-```{r}
-shapiro.test(deltas)
 ```
 
 ```{r}
