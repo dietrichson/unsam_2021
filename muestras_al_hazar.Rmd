@@ -26,5 +26,11 @@ my_data <-
       "Rodolfo Maximiliano Cacace Bach"
       )
   )
+
+library(dplyr)
+
+my_data %>% 
+  sample_n(9)
+
 ```
 

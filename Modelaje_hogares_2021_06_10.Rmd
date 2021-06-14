@@ -1,0 +1,223 @@
+---
+title: "Mas variables del INDEC"
+author: "Aleksander Dietrichson, PhD"
+date: "6/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Fuente de los datos
+
+INDEC: 
+
+https://www.indec.gob.ar/indec/web/Institucional-Indec-BasesDeDatos
+
+Manual:
+https://www.indec.gob.ar/ftp/cuadros/menusuperior/eph/EPH_registro_4T2020.pdf
+
+* PP08D1 = Sueldo
+* CH04 = Sexo **codigos**: 1 = varón, 2 = mujer
+* CH12 = Nivel Educativo
+  1 = Jardín/preescolar
+  2 = Primario
+  3 = EGB
+  4 = Secundario
+  5 = Polimodal
+  6 = Terciario
+  7 = Universitario
+  8 = Posgrado universitario
+  9 = Educación especial (discapacitado)
+  
+* REGION
+  01 = Gran Buenos Aires
+  40 = NOA
+  41 = NEA
+  42 = Cuyo
+  43 = Pampeana
+  44 = Patagonia
+* AGLOMERADO
+
+## Leer los datos
+
+```{r}
+my_data <- read.csv("./data/usu_individual_T420.txt", sep = ";" )
+```
+
+
+
+```{r}
+library(dplyr)
+my_data <- my_data %>%
+  select(PP08D1,CH04,CH12,REGION ) %>%
+  rename("ingreso" = PP08D1) %>%
+  rename("sexo" = CH04)
+# "1" == "uno"
+my_data$sexo <- factor(my_data$sexo, labels = c("1"="varón", "2"="mujer"))
+
+my_data$region <- 
+  factor(as.character(my_data$REGION), 
+         labels = c("1" = "Gran Buenos Aires",
+                    "40" = "NOA",
+                    "41" = "NEA",
+                    "42" = "Cuyo",
+                    "43" = "Pampeana",
+                    "44" = "Patagonia")
+  )
+
+my_data <- my_data %>% filter(CH12 %in% 1:8 )
+my_data$nivel_educativo <- 
+  factor(as.character(my_data$CH12),
+         labels = c(
+             "1" = "Jardín/preescolar"
+           ,  "2" = "Primario"
+           ,  "3" = "EGB"
+           ,  "4" = "Secundario"
+           ,  "5" = "Polimodal"
+           ,  "6" = "Terciario"
+           ,  "7" = "Universitario"
+           ,  "8" = "Posgrado universitario"
+           
+           
+         )
+  )
+
+my_data$niv_ed <- 
+  factor(as.character(my_data$CH12),
+         labels = c(
+           
+           "1" = "primaria",
+           "2" = "primaria",
+           "3" = "secundaria",
+           "4" = "secundaria",
+           "5" = "terciaria",
+           "6" = "terciaria",
+           "7" = "Universitario",
+           "8" = "Posgrado"
+         ), ordered = TRUE
+  )
+  factor(as.character(my_data$CH12),
+         levels = list(primaria=c("1","2"),
+                       secundaria=c("3","4"),
+                       terciario = c("5","6"),
+                       universitario = c("7"),
+                       postgrado = c("8"))
+
+         )
+
+my_data <- my_data %>% 
+  filter(!is.na(ingreso)) %>% 
+  filter(ingreso >= 0)
+
+```
+
+
+
+
+```{r}
+my_data %>% 
+  group_by(region) %>% 
+    summarize(
+    Promedio = mean(ingreso),
+    Mediano = median(ingreso)
+  )
+```
+
+```{r}
+my_data %>% 
+  group_by(region, sexo) %>% 
+    summarize(
+    Promedio = mean(ingreso),
+    Mediano = median(ingreso)
+  )
+```
+
+
+```{r}
+my_model <- lm(ingreso ~ sexo, data = my_data)
+my_model
+```
+
+```{r}
+summary(my_model)
+```
+
+```{r}
+my_model_2 <- lm(ingreso ~ sexo + nivel_educativo, data=my_data)
+summary(my_model_2)
+```
+
+```{r}
+my_data$e <- my_data$nivel_educativo
+my_model_2 <- lm(ingreso ~ sexo + e, data=my_data)
+summary(my_model_2)
+```
+
+```{r}
+anova(my_model_2)
+```
+
+```{r}
+my_data %>% 
+  ggplot(aes(x = nivel_educativo, y=ingreso,color=sexo))+
+  geom_point()+
+  geom_smooth(method = "lm", data = my_data %>% mutate(nivel_educativo = as.integer(nivel_educativo)))
+```
+
+```{r}
+my_data %>% 
+  ggplot(aes(x = nivel_educativo, y=ingreso,color=sexo))+
+  geom_boxplot()+
+  scale_y_continuous(labels=scales::dollar)+
+  geom_smooth(method = "lm", data = my_data %>% mutate(nivel_educativo = as.integer(nivel_educativo)), lty=3)
+```
+
+```{r}
+my_data %>% 
+  filter(nivel_educativo=="Universitario")->universitarios
+
+universitarios %>% 
+  group_by(sexo) %>% 
+  summarize(
+    N = n(),
+    Mean = mean(ingreso),
+    Median = median(ingreso)
+  )
+```
+
+```{r}
+my_data %>% 
+  filter(nivel_educativo=="Secundario")->secundario
+
+secundario %>% 
+ group_by(sexo) %>% 
+  summarize(
+    N = n(),
+    Mean = mean(ingreso),
+    Median = median(ingreso)
+  )
+```
+
+
+## Otro tema
+```{r}
+my_data_2 <- read.csv("./data/nombres-2015.csv", stringsAsFactors = FALSE)
+library(tidytext)
+```
+
+
+```{r}
+my_data_2 %>% 
+  head()
+```
+
+```{r}
+my_data_2 %>% 
+ group_by(nombre) %>% 
+  summarise(
+    N=n()
+  )
+```
+

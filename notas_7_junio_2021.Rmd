@@ -1,0 +1,42 @@
+---
+title: "Notas 7 de junio"
+author: "Sasha"
+date: "6/7/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+my_data <- read.csv("./data/usu_individual_T420.txt", sep=';')
+
+```
+
+```{r}
+my_sample <- head(my_data,10)
+```
+
+```{r}
+library(jsonlite)
+my_sample
+```
+
+```{r}
+toJSON(my_sample)
+```
+
+```{r}
+my_string <-toJSON( my_sample)
+```
+
+```{r}
+fromJSON(my_string)
+```
+
+```{r}
+persona <- list(primer_nombre=list('maria','celeste'))
+toJSON(persona)
+```
+

@@ -1,0 +1,159 @@
+---
+title: "Análisis de Tweets"
+author: "Sasha"
+date: "4 de junio 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Datos
+
+```{r}
+library(jsonlite)
+library(dplyr)
+my_data <- readLines("./data/tweets-elecciones.json")
+tmp <- jsonlite::fromJSON(my_data[1])
+
+my_tweets <- lapply(my_data[1:100],function(tweet){
+  
+  as.data.frame( # convertir a data.frame
+    jsonlite::fromJSON(tweet), #convertir de json a lista
+    stringAsFactors = FALSE
+    )
+}) %>% 
+  bind_rows()
+```
+
+```{r}
+nrow(my_tweets)
+```
+
+```{r}
+names(my_tweets)
+```
+
+```{r}
+my_tweets$user_name %>% unique
+```
+
+```{r}
+my_tweets$created_at %>% unique
+
+```
+
+```{r}
+library(ggplot2)
+library(stringr)
+my_tweets$text <- as.character(my_tweets$text)
+my_tweets$text %>% 
+  str_detect("AMLO") %>% 
+  sum()
+```
+
+```{r}
+my_tweets %>% 
+  mutate(AMLO = str_detect(text,"AMLO")) %>% 
+  group_by(AMLO) %>% 
+  summarise(
+    followers = sum(followers_count)
+  )
+```
+
+```{r}
+my_tweets$user_name %>% unique
+```
+
+```{r}
+
+my_tweets %>% 
+  mutate(AMLO = str_detect(text,"AMLO")) %>% 
+  mutate(Anaya = str_detect(text,"Anaya")) -> my_data_2
+
+```
+
+```{r}
+names(my_data_2)
+```
+
+```{r}
+my_data_2 %>% 
+  group_by(AMLO) %>% 
+  summarize(
+    retweet_count=sum(retweet_count),
+    retweets_per_tweet = sum(retweet_count)/n(),
+    N=n()
+    )
+```
+
+```{r}
+my_data_2 %>% 
+  group_by(Anaya) %>% 
+summarize(
+    retweet_count=sum(retweet_count),
+    retweets_per_tweet = sum(retweet_count)/n(),
+    N=n()
+    )
+```
+
+## Analysis de frecuencia de palabras
+
+```{r}
+
+my_tweets$fecha <-
+  my_tweets$created_at %>% as.character() %>% as.Date()
+my_tweets$fecha %>% 
+  unique
+```
+
+```{r}
+library(ggplot2)
+my_tweets %>% 
+  ggplot(aes(x=fecha))+
+  geom_bar()+
+  geom_vline(xintercept = as.Date("2018-04-22"), color='red',lty=2, lwd=1)
+```
+
+```{r}
+library(tidytext)
+my_data_3 <-
+  my_tweets %>% 
+  unnest_tokens(output = word,input = text)
+```
+
+
+```{r}
+my_data_3 %>% nrow()
+```
+
+```{r}
+my_data_3 %>% 
+  group_by(word) %>% 
+  count(sort = TRUE) %>% 
+  head(100)
+```
+
+```{r}
+my_data_3 %>% 
+  group_by(word, fecha) %>% 
+  count(sort = TRUE) %>% 
+  head(100)
+```
+
+```{r}
+my_data_3 %>% 
+  filter(word=="amlo") %>% 
+  group_by(word, fecha) %>% 
+  count(sort = TRUE)
+```
+
+
+```{r}
+my_data_3 %>% 
+  filter(word=="méxico") %>% 
+  group_by(word, fecha) %>% 
+  count(sort = TRUE)
+```
+

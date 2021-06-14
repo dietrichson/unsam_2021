@@ -1,0 +1,171 @@
+---
+title: "Pruebas no paramétricas"
+author: "Aleksander Dietrichson, PhD"
+date: "10 de junio 2021"
+output: beamer_presentation
+
+
+---
+
+```{r setup, include=FALSE, cache=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+library(bayestestR)
+library(dplyr)
+update_geom_defaults("bar", list(fill="red",color="red",alpha=.5))
+update_geom_defaults("density", list(fill="red",color="red", alpha=.5))
+theme_set(theme_tufte())
+my_data <- read.csv("./data/usu_individual_T420.txt", sep=";")
+my_data <- my_data %>%
+  select(PP08D1,CH04,CH12,REGION ) %>%
+  rename("ingreso" = PP08D1) %>%
+  rename("sexo" = CH04)
+my_data$sexo <- factor(my_data$sexo, labels = c("1"="varón", "2"="mujer"))
+my_data <- my_data %>% filter(ingreso >= 0)
+```
+
+## Agenda
+
+1. Prueba U de Mann-Whitney
+2. Prueba de rangos con signos de Wilcoxon
+3. Prueba de signos
+4. Tareas
+5. Ejemplos de Modelaje
+
+
+## Prueba U de Mann-Whitney
+
+La prueba U de Mann-Whitney también se conoce con otros nombres: *Mann–Whitney–Wilcoxon*, *Wilcoxon rank-sum test* y  *Wilcoxon–Mann–Whitney*. Por ello está disponible en R por medio de la función ```wilcox.test```.
+```{r,include = FALSE}
+library(dplyr)
+knitr::opts_chunk$set(echo = TRUE, size='normalsize',comment = '')
+set.seed(5129)
+```
+
+Se basa en rangos. De manera que:
+
+```{r echo=TRUE}
+my_sample <- my_data %>% 
+  sample_n(10) %>% 
+  select(sexo, ingreso) %>% 
+  mutate(rango = rank(ingreso)) %>% 
+  arrange(rango) %>% 
+  select(rango,everything())
+```
+
+
+## Prueba U de Mann-Whitney
+
+Da:
+
+```{r}
+my_sample %>% 
+  knitr::kable(booktabs=TRUE)
+```
+
+
+## Prueba U de Mann-Whitney
+
+$H_0: P(x_i>y_j)={1\over2}$
+
+$H_1: P(x_i>y_j)\neq{1\over2}$
+
+```{r}
+mujeres <- my_sample %>% filter(sexo == "mujer") %>% pull(ingreso)
+hombres <- my_sample %>% filter(sexo != "mujer") %>% pull(ingreso)
+wilcox.test(hombres,mujeres)
+```
+
+## Prueba de rangos con signos de Wilcoxon
+
+```{r, echo=FALSE}
+datos = data.frame(
+  Paciente = c( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+  Droga.A = c( 2,  3.6,  2.6,  2.7,  7.3,  3.4,  14.9,  6.6,  2.3,  2.1,  6.8,  8.5),
+  Droga.B = c( 3.5,  5.7,  2.9,  2.4,  9.9,  3.3,  16.7,  6,  3.8,  4,  9.1,  20.9)
+)
+datos %>% 
+  knitr::kable(
+    caption = "Eficiencia de dos medicamentos reportada por los pacientes.",
+    format.args = list(decimal.mark = ","),
+                       booktabs=TRUE
+  )
+```
+
+
+## Prueba de rangos con signos de Wilcoxon
+
+
+```{r, echo=TRUE}
+shapiro.test(datos$Droga.A)
+shapiro.test(datos$Droga.B)
+```
+
+
+## Prueba de rangos con signos de Wilcoxon
+
+
+```{r, echo=TRUE, warning=FALSE}
+wilcox.test(datos$Droga.A, datos$Droga.B, paired = TRUE)
+```
+
+## Test de T con los mismos datos
+
+```{r, echo=TRUE}
+t.test(datos$Droga.A,datos$Droga.B,paired = TRUE)
+```
+
+## Prueba de signos
+
+* Si las variables son solo ordinales
+
+$$
+z={{N-2\times{W}-1}\over\sqrt{N}}
+$$
+
+## Prueba de signos
+
+
+
+Ejemplo:
+
+39 prefieren Martínez 61 prefieren Habana. 50 No tienen preferencia. 
+
+$$
+z={{N-2\times{W}-1}\over\sqrt{N}} = {{100-2\times{39}-1}\over\sqrt{100}} = {21\over10} = 2,1
+$$
+
+## Implementación en R
+
+```{r, warning=FALSE, message=FALSE, echo=TRUE}
+library(BSDA)
+martinez <- c(rep(5,39),rep(1,61),rep(3,50))
+habana <- c(rep(1,39),rep(5,61),rep(3,50))
+SIGN.test(martinez,habana)
+```
+
+## Otro uso del test de signos
+
+* Si se conoce el mediano de la población, se puede usar para determinar si una variable x es significativamente distinto a ese.
+
+```{r echo=TRUE}
+Mediano <- median(my_data$ingreso)
+SIGN.test(my_sample$ingreso, md=Mediano)
+```
+
+## Otro uso del test de signos
+
+Ejemplo
+
+```{r, echo = TRUE}
+Mediano <- median(my_data$ingreso)
+ingresos_observados <- c(rep(10000,20),300000,300000)
+SIGN.test(ingresos_observados, md=Mediano)
+```
+
+## Tareas
+
+* ¿Cuál es la distribución de sus datos?
+* ¿Qué impacto tiene a la hora de seleccionar metodos estadísticos?
