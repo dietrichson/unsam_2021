@@ -7,7 +7,9 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 library(rtweet)
+
 library(dplyr)
 ```
 
@@ -20,9 +22,9 @@ if(!file.exists(my_filename)){
   rt <- search_tweets(
     "alberto", n = 18000, include_rts = FALSE
   )
-  readr::write_rds(rt,my_filename)
+  readr::write_rds(rt, my_filename )
 } else {
-  rt <- readr::read_rds(my_filename)
+  rt <- readr::read_rds( my_filename )
 }
 ```
 
@@ -73,3 +75,27 @@ argentina_tweets %>%
   count(sort=TRUE)
 ```
 No particularmente interesante, pero demuestra la técnica.
+
+
+```{r}
+filename_2 <- "./data/twitter_biden.rds"
+if(!file.exists(filename_2)){
+  rt2 <- search_tweets("Biden", n=18000, include_rts = FALSE)
+  readr::write_rds(rt2, filename_2)
+} else {
+  rt2 <- readr::read_rds(filename_2)
+}
+```
+
+```{r}
+rt2$text %>% 
+  head()
+```
+
+```{r}
+rt2 %>% 
+  unnest_tokens(word,text) %>% 
+  group_by(word) %>% 
+  count(sort = TRUE)
+```
+
