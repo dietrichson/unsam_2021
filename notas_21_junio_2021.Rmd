@@ -168,3 +168,30 @@ my_data2 %>%
   count(sort=TRUE)
 ```
 
+```{r}
+my_filename <- paste0("tweets_",as.Date(Sys.Date()),".rds")
+if(!file.exists(my_filename)){
+  # baja los tweets
+  #guardarlos
+}
+```
+
+```{r}
+my_files <- dir("./data",pattern = "nombres-",full.names = TRUE)
+
+my_files
+```
+
+```{r}
+tmp <- data.frame()
+for(filename in my_files){
+  cat("Cargo archivo", filename, "\n")
+  tmp <- tmp %>% 
+    rbind(readr::read_csv(filename))
+}
+```
+
+```{r}
+nrow(tmp)
+```
+
