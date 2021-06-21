@@ -99,3 +99,48 @@ rt2 %>%
   count(sort = TRUE)
 ```
 
+```{r}
+library(stringr)
+estan_juntos <- rt2 %>% 
+  filter(str_detect(text,"Trump")) %>% 
+  filter(str_detect(text,"Biden"))
+```
+
+```{r}
+nrow(estan_juntos)
+```
+
+```{r}
+estan_juntos$text[1:10]
+```
+
+```{r}
+estan_juntos <- rt2 %>% 
+  filter(str_detect(text,"Trump") & #and
+           str_detect(text,"Biden")
+         )
+```
+
+```{r}
+no_estan_juntos_necesariamente <- rt2 %>% 
+  filter(str_detect(text,"Trump") | #or
+           str_detect(text,"Rise"))
+```
+
+```{r}
+ejemplo2 <- rt2 %>% 
+  filter(str_detect(text,"Trump")) %>% 
+  filter(
+    str_detect(text,"southern") | 
+      str_detect(text,"northern") | 
+      str_detect(text,"western") 
+  )
+```
+
+```{r}
+nrow(ejemplo2)
+```
+```{r}
+ejemplo2$text
+```
+
