@@ -168,4 +168,4 @@ SIGN.test(ingresos_observados, md=Mediano)
 ## Tareas
 
 * ¿Cuál es la distribución de sus datos?
-* ¿Qué impacto tiene a la hora de seleccionar metodos estadísticos?
+* ¿Qué impacto tiene a la hora de seleccionar métodos estadísticos?

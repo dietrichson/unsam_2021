@@ -1,0 +1,270 @@
+---
+title: "Prueba de Chi Cuadrado y Correlaciones"
+author: "Aleksander Dietrichson, PhD"
+date: "17 de junio 2021"
+output: beamer_presentation
+
+
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE)
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+library(bayestestR)
+library(dplyr)
+update_geom_defaults("bar", list(fill="red",color="red",alpha=.5))
+update_geom_defaults("density", list(fill="red",color="red", alpha=.5))
+theme_set(theme_tufte())
+# my_data <- read.csv("./data/usu_individual_T420.txt", sep=";")
+# my_data <- my_data %>%
+#   select(PP08D1,CH04,CH12,REGION ) %>%
+#   rename("ingreso" = PP08D1) %>%
+#   rename("sexo" = CH04)
+# my_data$sexo <- factor(my_data$sexo, labels = c("1"="varón", "2"="mujer"))
+# my_data <- my_data %>% filter(ingreso >= 0)
+```
+
+## Agenda
+
+1. Prueba Chi Cuadrado
+2. Correlacion Pearson
+3. Correlación Spearman y Kendall
+4. Ejemplos
+
+
+## Prueba Chi Cuadrado
+
+* Permite realizar un test de independencia cuando las variables son *nominales*
+* Funciona sobre frecuencias (no proporciones o porcentajes)
+* Responde la pregunta de si los valores encontrados difieren de manera significativo de los esperados según su definición:
+
+$$
+\chi^2 = \sum{(O-E)^2\over{E}}
+$$
+
+## ¿cómo saber cual es el valor esperado?
+
+* Son valores teóricos, p.ej. Esperamos que *sexo* se distribuye mitad y mitad (+/-)
+* Se calculan basados en la misma muestra
+
+## Ejemplo
+
+```{r}
+M <- as.table(rbind(c(762, 468), c(484, 477)))
+dimnames(M) <- list(gender = c("Mujeres", "Hombres"),
+                    party = c("A favor", "En contra"))
+knitr::kable(M, caption = "Opinión sobre la Ley del Aborto")
+```
+
+
+$$
+E_{1,1} = {{1230\times1246}\over2191} = 699,48
+$$
+
+## Ejemplo
+
+Si lo calculamos para todas las celdas obtenemos:
+
+```{r}
+myTest <- chisq.test(M)
+M3 <- myTest$expected 
+M3 <- cbind(M3,rowSums(M3))
+M3 <- rbind(M3,colSums(M3))
+M3 <- as.data.frame(M3) %>% 
+  rename(total=V3)
+row.names(M3) <- c("Mujeres","Hombres","total")
+M3%>% 
+  knitr::kable( format.args = list(decimal.mark=','), digits=2,
+                caption="Valores esperados: opiniones sobre la ley del aborto.")
+```
+
+
+## Ejemplo
+
+```{r}
+M4 <- myTest$observed - myTest$expected
+
+M4 %>% knitr::kable(caption='Diferencias entre valores observados y esperados.', digits = 2, format.args = list(decimal.mark=","))
+```
+
+
+
+$$
+\chi^2 = \sum{(O-E)^2\over{E}} = {62,52^2\over699,49} +{-62,52^2\over530,51} +{62,52^2\over546,51}+{-62,52^2\over414,49} = 29,53.
+$$
+
+## Ejemplo
+
+O hacerlo con R:
+
+```{r, echo=TRUE}
+M <- as.table(rbind(c(762, 468), c(484, 477)))
+dimnames(M) <- list(gender = c("Mujeres", "Hombres"),
+                    party = c("A favor", "En contra"))
+
+chisq.test(M)
+```
+
+## Comparar con valores conocidos
+
+```{r, echo=TRUE}
+x <- c(Mujeres=123,Hombres=96)
+chisq.test(x) # Assume 50-50
+```
+
+## Definir probabilidades
+
+
+```{r, echo=TRUE}
+chisq.test(x, p = c(0.50,0.50))
+```
+
+```{r, include=FALSE}
+library(mvtnorm)
+
+set.seed(1)
+correlation <- c(-0.9999, -0.9, -0.75,-.5, -0.3, 0, 0.3, 0.75, 0.9, 0.9999)
+n_sim <- 100
+values <- NULL
+for(i in seq_len(length(correlation))){
+  rho <- correlation[i]
+  sigma <- matrix(c(5, rho * sqrt(50), rho * sqrt(50), 10), 2, 2)
+  sim <- rmvnorm(
+    n = n_sim,
+    mean = c(20,40),
+    sigma = sigma
+    ) %>%
+    as_tibble() %>%
+    mutate(correlation = round(rho,2))
+  values <- bind_rows(values, sim)
+}
+names(values) <- c("x","y","correlation")
+```
+## Correlaciones
+
+```{r}
+  ggplot(data = values %>% filter(correlation ==.9), mapping = aes(x,y)) +
+  geom_point() 
+```
+
+## Correlaciones
+
+```{r}
+  ggplot(data = values %>% filter(correlation ==.9), mapping = aes(x,y)) +
+  geom_point() +
+  geom_smooth(method="lm", color="red", se=F, alpha=.4)
+```
+## Correlaciones
+
+```{r}
+set.seed(1)
+tmpDF <- data.frame(x=seq(-7,7,by=.1))
+tmpDF$y=tmpDF$x^2
+for(i in 1:5){
+tmpDF <- tmpDF %>% 
+  bind_rows(data.frame(x=tmpDF$x,y=tmpDF$y+i))
+}
+
+tmpDF %>%
+  sample_frac(.10) %>% 
+  ggplot( aes(x,y))+
+  geom_point()+ylab("y") -> gg
+gg
+```
+
+
+## Correlaciones
+
+```{r}
+gg+  geom_smooth(method="lm", color="red", se=F, alpha=.4)
+```
+
+
+## Correlación Pearson
+
+* Mide correlación entre dos variables 
+* Deben ser de intervalo o razón
+* Toma en cuenta la *magnitud relativa* 
+
+## Correlación Pearson
+```{r, include=FALSE}
+datos<- data.frame(
+  Estudiante = c( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) %>% as.character(),
+  x = c( 17, 13, 12, 14, 15, 8, 9, 13, 11, 14, 12, 16),
+  y = c( 15, 13, 8, 17, 16, 9, 14, 10, 16, 13, 14, 17)
+) 
+```
+
+
+
+```{r}
+datos %>% 
+  knitr::kable(
+    caption = "Resultados de un examen de tradución (x) y de comprensión (y) de ingles.",
+    format.args = list(decimal.mark = ","),
+                       booktabs=TRUE
+  )
+
+```
+
+## Correlación Pearson
+
+```{r, echo=TRUE}
+datos<- data.frame(
+  Estudiante = c( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+  x = c( 17, 13, 12, 14, 15, 8, 9, 13, 11, 14, 12, 16),
+  y = c( 15, 13, 8, 17, 16, 9, 14, 10, 16, 13, 14, 17)
+) 
+cor(datos$x, datos$y)
+```
+
+* ¿Interpretación?
+
+## Correlación Spearman
+
+* Cuando los datos son *Ordinales*
+* Cuando son de ratio/intervalo y hay valores extremos
+* Funciona sobre el *rango* u *orden*
+
+## Correlación Spearman
+
+```{r, echo=TRUE}
+rankings <- data.frame(
+  Cafe.A = c(7, 6, 4, 5, 8, 7, 10, 3, 9, 2),
+  Cafe.B = c(5, 4, 5, 6, 10, 7, 9, 2, 8, 1)
+)
+
+# Llamamos función
+cor(rankings$Cafe.A, rankings$Cafe.B, method = "spearman")
+```
+
+## Correlación Kendall
+
+* Alternativa de Spearman 
+* Diferencias teóricas
+
+
+## Correlación Kendall
+
+```{r, echo=TRUE}
+cor(rankings$Cafe.A, rankings$Cafe.B, method = "kendall")
+```
+
+
+
+## Correlación Spearman con Valores Extremos
+
+```{r, echo=TRUE}
+datos<- data.frame(
+  Estudiante = c( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+  x = c( 17, 13, 120, 14, 15, 8, 9, 13, 11, 14, 120, 160),
+  y = c( 16, 13, 8, 17, 16, 9, 14, 10, 16, 13, 14, 17)
+) 
+cor(datos$x,datos$y)
+```
+```{r, echo=TRUE}
+cor(datos$x,datos$y, method = "spearman")
+```
+

@@ -1,0 +1,75 @@
+---
+title: "Twitter"
+author: "Sasha"
+date: "21 de junio 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rtweet)
+library(dplyr)
+```
+
+## rtweet 
+
+```{r}
+my_filename <- "./data/twitter_sample_alberto.rds"
+
+if(!file.exists(my_filename)){
+  rt <- search_tweets(
+    "alberto", n = 18000, include_rts = FALSE
+  )
+  readr::write_rds(rt,my_filename)
+} else {
+  rt <- readr::read_rds(my_filename)
+}
+```
+
+
+
+## Filtrar por "location"
+
+En general no es buena idea ya que depende del campo "location" que ponga el usuario.
+
+```{r}
+de_argentina <- 
+  str_detect(rt$location,"argentina")|
+  str_detect(rt$location,"Argentina")
+
+sum(de_argentina)
+
+argentina_tweets <- rt %>% 
+  filter(de_argentina)
+```
+
+```{r}
+  argentina_tweets$text %>% 
+  head()
+```
+
+## Mirar con tidytext
+
+```{r}
+library(tidytext)
+
+argentina_tweets %>% 
+  unnest_tokens(word,text) %>% 
+  group_by(word) %>% 
+  count(word,sort=TRUE) %>% 
+  head(100)
+```
+
+## Mirar las fechas
+
+```{r}
+argentina_tweets <- argentina_tweets %>% 
+  mutate(Fecha = as.Date(created_at))
+```
+
+```{r}
+argentina_tweets %>% 
+  group_by(Fecha) %>% 
+  count(sort=TRUE)
+```
+No particularmente interesante, pero demuestra la técnica.
