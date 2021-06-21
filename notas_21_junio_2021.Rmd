@@ -144,3 +144,27 @@ nrow(ejemplo2)
 ejemplo2$text
 ```
 
+```{r}
+library(stopwords)
+my_stopwords <- stopwords::data_stopwords_snowball$es
+```
+
+```{r}
+my_stopwords <- my_storwords %>% 
+  c("https","t.co","q")
+```
+
+```{r}
+my_data2 <- argentina_tweets %>% 
+  unnest_tokens(word,text) %>% 
+  anti_join(
+    data.frame(word=my_stopwords)
+    )
+```
+
+```{r}
+my_data2 %>% 
+  group_by(word) %>% 
+  count(sort=TRUE)
+```
+
