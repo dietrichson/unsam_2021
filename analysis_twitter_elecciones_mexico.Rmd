@@ -1,0 +1,176 @@
+---
+title: "Analysis Twitter II"
+author: "Sasha"
+date: "6/28/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(jsonlite)
+library(dplyr)
+
+my_filename <- "./data/tweets-elecciones.rds"
+
+if(!file.exists(my_filename)){
+  
+my_data <- readLines("./data/tweets-elecciones.json")
+tmp <- jsonlite::fromJSON(my_data[1])
+
+my_tweets <- lapply(my_data[1:10000L],function(tweet){
+  
+  as.data.frame( # convertir a data.frame
+    jsonlite::fromJSON(tweet), #convertir de json a list
+    stringAsFactors = FALSE
+    )
+}) %>% 
+  bind_rows()
+  
+  readr::write_rds(my_tweets, my_filename)
+  
+} else {
+  
+  my_tweets <- readr::read_rds(my_filename)
+  
+}
+```
+
+```{r}
+ rt <- my_tweets
+```
+
+```{r}
+nrow(rt)
+```
+
+```{r}
+library(tidytext)
+rt$text <- as.character(rt$text)
+rt %>% 
+  unnest_tokens(palabra, text, token = 'tweets') -> tokenized_tweets 
+```
+
+```{r}
+tokenized_tweets %>% 
+  filter (startsWith(palabra,"#"))
+```
+
+
+```{r}
+tokenized_tweets %>% head()
+```
+
+```{r}
+tokenized_tweets %>% 
+  filter (startsWith(palabra,"@"))
+```
+
+```{r}
+tokenized_tweets %>% 
+  filter(stringr::str_detect(palabra,"@lopezobrador_"))
+```
+
+```{r}
+rt %>% 
+  filter(user_name=="lopezobrador_")
+```
+
+```{r}
+rt$user_name %>% unique
+```
+
+```{r}
+rt$user_name <- as.character(rt$user_name)
+rt %>% 
+  filter(startsWith(user_name,"PRI"))
+```
+
+```{r}
+rt %>% 
+  filter(index == 2976)
+```
+
+```{r}
+my_data <- data.frame(year =c( "primero","tercero","segundo"), stringsAsFactors = FALSE )
+my_data <- data.frame(year =c( "primero","tercero","segundo"))
+```
+
+
+```{r}
+class(my_data$year)
+as.numeric(my_data$year)
+```
+
+```{r}
+my_data$year_numeric <-
+  lapply(my_data$year, function(x){
+    
+    switch(x,
+           "primero" = 1,
+           #"segundo" = 2,
+           "tercero" = 3,
+           default = NA         )
+  }) %>% 
+  unlist()
+```
+
+```{r}
+my_data$year_numeric
+```
+
+```{r}
+my_data
+```
+
+```{r}
+sum(is.na(my_data$year_numeric))
+```
+
+```{r}
+numero <- 8
+numero2 <- "ocho"
+numero3 <- "eight"
+numero4 <- "VIII"
+numero5 <- "8"
+```
+
+```{r}
+numero +2
+```
+
+```{r}
+numero2 +2
+```
+
+```{r}
+numero5 +2
+```
+
+```{r}
+as.numeric(numero5) +2
+```
+
+```{r}
+as.numeric(numero4)
+```
+
+```{r}
+my_data2 <- data.frame(nombre = c("Juan","Jorge","Anabel"))
+```
+
+```{r}
+my_data2$nombre %>% 
+  as.numeric()
+```
+
+```{r}
+my_data2 <- data.frame(nombre = c("Juan", "Jorge", "Anabel"), stringsAsFactors = FALSE)
+```
+
+```{r}
+my_data2$nombre %>% 
+  as.numeric()
+```

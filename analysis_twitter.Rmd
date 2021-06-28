@@ -20,7 +20,7 @@ tmp <- jsonlite::fromJSON(my_data[1])
 my_tweets <- lapply(my_data[1:100],function(tweet){
   
   as.data.frame( # convertir a data.frame
-    jsonlite::fromJSON(tweet), #convertir de json a lista
+    jsonlite::fromJSON(tweet), #convertir de json a list
     stringAsFactors = FALSE
     )
 }) %>% 
