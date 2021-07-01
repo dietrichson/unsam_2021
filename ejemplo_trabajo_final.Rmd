@@ -303,3 +303,35 @@ summary(my_model2)
 ```
 
 El análisis muestra que todas las regiones muestran diferencias significativas comparado con el promedio, con lo cual refutamos la hipótesis nula en este caso también.
+
+
+```{r}
+my_sample <- my_data %>% 
+  sample_n(20)
+
+wilcox.test(
+  my_sample %>% filter(sexo=="mujer") %>% pull(ingreso),
+  my_sample %>% filter(sexo!="mujer") %>% pull(ingreso)
+            )
+```
+
+```{r}
+
+wilcox.test(
+  my_data %>% filter(sexo=="mujer") %>% pull(ingreso),
+  my_data %>% filter(sexo!="mujer") %>% pull(ingreso)
+            )
+```
+
+
+
+## Exploratorio
+
+```{r}
+my_data %>% 
+  ggplot(aes(as.numeric(niv_ed),ingreso, color=sexo))+
+  geom_smooth(method = "lm")+
+  scale_y_continuous(labels=scales::dollar)+
+  scale_x_continuous(breaks = 1:5, labels = levels(my_data$niv_ed))
+```
+

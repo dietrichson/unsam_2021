@@ -174,3 +174,20 @@ my_data2 <- data.frame(nombre = c("Juan", "Jorge", "Anabel"), stringsAsFactors =
 my_data2$nombre %>% 
   as.numeric()
 ```
+
+```{r}
+my_data3 <- data.frame(numero = c("1","3","2","28"), stringsAsFactors = TRUE)
+```
+
+
+```{r}
+my_data3$numero %>% 
+  as.numeric()
+```
+
+```{r}
+my_data3$numero %>% 
+  as.character() %>% 
+  as.numeric()
+```
+

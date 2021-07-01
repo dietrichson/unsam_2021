@@ -1,0 +1,76 @@
+---
+title: "Tipitaka"
+author: "Sasha"
+date: "7/1/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tipitaka)
+```
+
+## Long Form
+```{r}
+tipitaka_long %>% 
+  names()
+```
+
+```{r}
+tipitaka_long$n %>% 
+  head()
+tipitaka_long$freq %>% 
+  head()
+```
+
+```{r}
+tipitaka_raw %>% 
+  head()
+```
+
+```{r}
+texto <- "Esto es un texto 123 un texto mas 124, sigo bal blab al 145 , esto es una cancion "
+
+stringr::str_split(texto,"[0-9]+") %>% unlist() -> tmp
+
+my_data <- data.frame(text=tmp)
+
+
+my_data
+```
+
+```{r}
+my_data %>% 
+  filter(
+    str_detect(text,'u.') &
+    str_detect(text,'texto')
+    ) 
+  
+```
+
+```{r}
+my_data %>% 
+  filter(
+    str_detect(text,'u. ')
+    
+    ) 
+  
+```
+```{r}
+tmp <- my_data %>% 
+  filter(
+    str_detect(text,'u.') &
+    str_detect(text,'texto')
+    ) %>% 
+  nrow() 
+
+my_data2 <- data.frame(search="u. + texto",n=tmp)
+```
+
+```{r}
+my_data$frecuencia_texto <-
+  purrr::map_int(my_data$text,~{
+    str_count(.x,"texto")
+  })
+```
+
