@@ -1,0 +1,305 @@
+---
+title: "Métodos cuantitativos"
+author: "Aleksander Dietrichson, PhD"
+date: "1 de julio 2021"
+output:
+  slidy_presentation: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+  beamer_presentation: default
+subtitle: Trabajo final
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+```
+
+## Distribución del ingreso en Argentina
+
+El presente trabajo analizará la distribución del ingreso en Argentina. Se basará en datos de dominio publico y propondrá algunas hipótesis para ponerlas a prueba con tests estadísticos. También se realizará un análisis descriptivo de algunos aspectos que consideramos de interés para la comprensión de los temas en cuestión.
+
+## Datos
+
+Los datos a ser analizados provienen de la *Encuesta continua de hogares* publicado trimestralmente por el Instituto Nacional de Estadísticas y Censos.
+
+* https://www.indec.gob.ar/indec/web/Institucional-Indec-BasesDeDatos
+
+Para desglosar los códigos de variables allí encontrados de recurre al manual, publicado en el mismo dominio de internet:
+
+* https://www.indec.gob.ar/ftp/cuadros/menusuperior/eph/EPH_registro_4T2020.pdf
+
+## Variables analizados
+
+### Sueldo o ingreso
+
+Esta variable es:
+
+* De ratio y 
+* Continua
+  
+### Sexo 
+
+Esta variable es:
+
+* Nominal
+* De dos niveles y
+* Discreta
+  
+## Variables analizados II
+
+### Nivel Educativo 
+
+Esta variable es:
+
+* Ordinal y
+* Discreta
+
+### Región
+
+Esta variable es:
+
+* Nominal
+* De 6 niveles y 
+* Discreta
+
+
+## Estudio descriptivo
+
+Se realizará un análisis descriptivo de los datos. Específicamente se eligirá medidas de:
+
+* Tendencia central
+* Dispersión
+
+Según los niveles y tipos de variables a disposición.
+
+## Hipotesis principales
+
+* Existe diferencias en cuanto al ingreso que son discriminables por 
+1. sexo 
+2. nivel educativo y 
+3. región.
+
+## Hipotesis I
+
+Existen diferencias entre hombres y mujeres en cuanto al ingreso promedio? La hipotesis nula es que no existe esta diferencia y la alternativa es que los hobres ganan más.
+
+
+* $H_0: \text{El ingreso es igual}$
+* $H_1: \text{Los hombres ganan más}$
+
+o, más formalmente:
+
+* $H_0: \mu_{mujer}=\mu_{hombre}$
+* $H_1: \mu_{mujer}<\mu_{hombre}$
+
+## Hipotesis I: Test aplicable
+
+Para refutar o no la hipótesis nula se utilizará 
+
+* El test de T de Student
+o su contraparte no paramétrica
+* Test U de Mann-Whitney
+
+## Hipotesis II
+
+Existen diferencias en el ingreso por nivel educativo. La hipotesis alternativa es que el nivel educativo contribuye de manera positiva en el ingreso. 
+
+* $H_0: \mu_{primario}=\mu_{secundario}=\mu_{terciario}...$
+* $H_1: \mu_{primario}<\mu_{secundario}<\mu_{terciario}...$
+
+## Hipotesis II: Test aplicable
+
+Para refutar o no la hipótesis nula se utilizará 
+
+* Análisis de regresión simple 
+
+
+## Hipotesis III
+
+La hipótesis nula en este caso es que el promedio de ingreso entre las diferentes regiones es igual en todas las regiones y la alternativa es que existen diferencias que se pueden explicar por la región.
+
+
+* $H_0: \mu_{gba}=\mu_{noa}=\mu_{nea}...$
+* $H_1: \mu_{gba}\neq\mu_{noa}\neq\mu_{nea}...$
+
+## Hipotesis III: 
+
+Para refutar o no la hipótesis nula se utilizará 
+
+* Análisis de regresión simple 
+o
+* Análisis de Varianza (ANOVA)
+
+
+
+```{r leer-y-transformar, include=FALSE}
+
+my_data <- read.csv("./data/usu_individual_T420.txt", sep = ";" )
+
+
+library(dplyr)
+my_data <- my_data %>%
+  select(PP08D1,CH04,CH12,REGION ) %>%
+  rename("ingreso" = PP08D1) %>%
+  rename("sexo" = CH04)
+# "1" == "uno"
+my_data$sexo <- factor(my_data$sexo, labels = c("1"="varón", "2"="mujer"))
+
+my_data$region <-
+  factor(as.character(my_data$REGION),
+         labels = c("1" = "Gran Buenos Aires",
+                    "40" = "NOA",
+                    "41" = "NEA",
+                    "42" = "Cuyo",
+                    "43" = "Pampeana",
+                    "44" = "Patagonia")
+  )
+
+my_data <- my_data %>% filter(CH12 %in% 1:8 )
+my_data$nivel_educativo <-
+  factor(as.character(my_data$CH12),
+         labels = c(
+             "1" = "Jardín/preescolar"
+           ,  "2" = "Primario"
+           ,  "3" = "EGB"
+           ,  "4" = "Secundario"
+           ,  "5" = "Polimodal"
+           ,  "6" = "Terciario"
+           ,  "7" = "Universitario"
+           ,  "8" = "Posgrado universitario"
+
+
+         )
+  )
+
+my_data$niv_ed <- 
+  factor(as.numeric(my_data$CH12),
+         labels = c(
+           "1" = "primaria",
+           "2" = "primaria",
+           "3" = "secundaria",
+           "4" = "secundaria",
+           "5" = "terciaria",
+           "6" = "terciaria",
+           "7" = "Universitario",
+           "8" = "Posgrado"
+         ), ordered = TRUE
+  )
+
+excluded_data <- 
+  my_data %>%
+  filter(!is.na(ingreso)) %>%
+  filter(ingreso < 0)
+
+my_data <- my_data %>%
+  filter(!is.na(ingreso)) %>%
+  filter(ingreso >= 0)
+
+```
+
+## Análisis descriptivo: Ingreso
+
+```{r}
+
+my_data %>% 
+  ggplot(aes(ingreso))+
+  geom_histogram()+
+  scale_x_continuous(labels=scales::dollar)
+```
+Observamos una distribución sesgada, con lo cual la medida de tendencia central sera *la mediana*.
+
+El sueldo mediano en Argentina es `r median(my_data$ingreso) %>% scales::dollar()`.
+
+## Análisis descriptivo: Ingreso
+
+En vista del sesgo observado consideramos que la medida de dispersión más adecuadad para el caso el *La Desviación Media Absoluta*. Que para este caso es: `r mad(my_data$ingreso) %>% scales::dollar()`.
+
+Observamos un valor relativamente alto, seguramente debido al sesgo ya observado.
+
+## Análisis descriptivo: Diferencias por sexo
+
+```{r}
+my_data %>% 
+  group_by(sexo) %>% 
+  summarize(
+    Ingreso_Mediano = median(ingreso)
+  ) %>% 
+  ggplot(aes(x=sexo, y=Ingreso_Mediano,fill=sexo))+
+  geom_bar(stat='identity')
+```
+
+Observamos una diferencia en la mediana. 
+
+## Análisis inferencial: hipótesis I
+
+Aplicamos el test de T.
+
+```{r}
+t.test(
+  my_data %>% filter(sexo == "mujer") %>% pull(ingreso),
+  my_data %>% filter(sexo != "mujer") %>% pull(ingreso)
+       )
+```
+
+Con lo cual logramos refutar la hipótesis nula. El test también nos indica que la diferencia entre el ingreso de los hombres y el de las mujeres está entre 2,318 y 3,854 pesos con un intervalo de confianza del 95% 
+
+
+## Análisis descriptivo: Nivel Educativo
+
+
+```{r}
+my_data %>% 
+  ggplot(aes(as.numeric(niv_ed),ingreso))+
+  geom_smooth(method = "lm")+
+  scale_y_continuous(labels=scales::dollar)+
+  scale_x_continuous(breaks = 1:5, labels = levels(my_data$niv_ed))
+```
+
+
+## Análisis inferencial: hipótesis II
+
+Modelo de regression
+
+```{r}
+my_model <- lm(ingreso ~ niv_ed,data=my_data %>% mutate(niv_ed=as.numeric(niv_ed)))
+summary(my_model)
+```
+Observamos que el nivel educativo es altamente significativo como predictor del ingreso. Su coefficiente es de 6364.5 pesos, lo cual significa que en promedio el sueldo sube a razón de esta cantidad por nivel educativo obtenido.
+
+## Análisis inferencial: hipótesis II 
+
+Con modelo de ANOVA
+
+```{r}
+my_model %>% 
+  anova()
+```
+
+Da el mismo resultado.
+
+
+## Análisis descriptivo: región.
+
+```{r, message=FALSE}
+my_data %>%
+  group_by(region, sexo) %>%
+    summarize(
+    Promedio = mean(ingreso),
+    Mediano = median(ingreso)
+  ) %>% ungroup() %>% 
+  ggplot(aes(x=region,y=Mediano, fill=region))+
+  geom_bar(stat='identity')
+```
+
+Observamos diferencias importantes.
+
+## Análisis inferencial: Hypotesis III
+
+```{r}
+my_model2 <- lm(ingreso ~ region, data = my_data)
+summary(my_model2)
+```
+
+El análisis muestra que todas las regiones muestran diferencias significativas comparado con el promedio, con lo cual refutamos la hipótesis nula en este caso también.
